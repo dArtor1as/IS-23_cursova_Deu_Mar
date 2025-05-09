@@ -37,8 +37,8 @@ def run_experiment_iterations():
     while True:
         try:
             W = float(input("Введіть ширину області генерації (W): "))
-            if W <= 0:
-                raise ValueError("Ширина має бути додатною!")
+            if W <= l_avg:
+                raise ValueError("Ширина має бути більшою за середню довжину тунелю!")
             break
         except ValueError as e:
             print(f"Невірне введення: {str(e)}. Введіть додатне число!")
@@ -46,8 +46,8 @@ def run_experiment_iterations():
     while True:
         try:
             H = float(input("Введіть висоту області генерації (H): "))
-            if H <= 0:
-                raise ValueError("Висота має бути додатною!")
+            if H <= l_avg:
+                raise ValueError("Висота має бути більшою за середню довжину тунелю!")
             break
         except ValueError as e:
             print(f"Невірне введення: {str(e)}. Введіть додатне число!")
@@ -125,8 +125,8 @@ def run_experiment_delta_l():
     while True:
         try:
             W = float(input("Введіть ширину області генерації (W): "))
-            if W <= 0:
-                raise ValueError("Ширина має бути додатною!")
+            if W <= l_avg:
+                raise ValueError("Ширина має бути більшою за середню довжину тунелю!")
             break
         except ValueError as e:
             print(f"Невірне введення: {str(e)}. Введіть додатне число!")
@@ -134,8 +134,8 @@ def run_experiment_delta_l():
     while True:
         try:
             H = float(input("Введіть висоту області генерації (H): "))
-            if H <= 0:
-                raise ValueError("Висота має бути додатною!")
+            if H <= l_avg:
+                raise ValueError("Висота має бути більшою за середню довжину тунелю!")
             break
         except ValueError as e:
             print(f"Невірне введення: {str(e)}. Введіть додатне число!")
@@ -166,12 +166,12 @@ def run_experiment_delta_l():
             if not delta_l_values:
                 raise ValueError("Ви маєте вказати хоча б одне значення Δl!")
             if any(dl < 0 for dl in delta_l_values):
-                raise ValueError("Усі значення Δl мають бути невід'ємними!")
+                raise ValueError("Усі значення коефіцієнтів Δl мають бути невід'ємними!")
             if any(dl > l_avg for dl in delta_l_values):
-                raise ValueError("Усі значення Δl мають бути не більшими за l̅!")
+                raise ValueError("Усі значення коефіцієнтів Δl мають бути не більшими за 1!")
             break
         except ValueError as e:
-            print(f"Невірне введення: {str(e)}. Введіть невід'ємні числа, не більші за l̅, через пробіл!")
+            print(f"Невірне введення: {str(e)}. Введіть невід'ємні числа, від 0 до 1")
 
     results_greedy = {dl: [] for dl in delta_l_values}
     results_prob = {dl: [] for dl in delta_l_values}
@@ -237,8 +237,8 @@ def run_experiment_n():
     while True:
         try:
             W = float(input("Введіть ширину області генерації (W): "))
-            if W <= 0:
-                raise ValueError("Ширина має бути додатною!")
+            if W <= l_avg:
+                raise ValueError("Ширина має бути більшою за середню довжину тунелю!")
             break
         except ValueError as e:
             print(f"Невірне введення: {str(e)}. Введіть додатне число!")
@@ -246,8 +246,8 @@ def run_experiment_n():
     while True:
         try:
             H = float(input("Введіть висоту області генерації (H): "))
-            if H <= 0:
-                raise ValueError("Висота має бути додатною!")
+            if H <= l_avg:
+                raise ValueError("Висота має бути більшою за середню довжину тунелю!")
             break
         except ValueError as e:
             print(f"Невірне введення: {str(e)}. Введіть додатне число!")

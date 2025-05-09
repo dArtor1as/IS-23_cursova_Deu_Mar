@@ -134,6 +134,8 @@ def run_task(n, a, b, c, d, m, W=None, H=None):
     while True:
         try:
             choice = int(input("Введіть ваш вибір (1-3): "))
+            if choice not in [1, 2, 3]:
+                raise ValueError("Введіть число від 1 до 3!")
             break
         except ValueError:
             print("Будь ласка, введіть коректне число від 1 до 3!")
@@ -231,8 +233,8 @@ def main_menu():
             while True:
                 try:
                     W = float(input("Введіть ширину області генерації (W): "))
-                    if W <= 0:
-                        raise ValueError("Ширина має бути додатною!")
+                    if W <= l_avg:
+                        raise ValueError("Ширина має бути більшою за середню довжину тунелю!")
                     break
                 except ValueError as e:
                     print(f"Невірне введення: {str(e)}. Введіть додатне число!")
@@ -240,8 +242,8 @@ def main_menu():
             while True:
                 try:
                     H = float(input("Введіть висоту області генерації (H): "))
-                    if H <= 0:
-                        raise ValueError("Висота має бути додатною!")
+                    if H <= l_avg:
+                        raise ValueError("Висота має бути більшою за середню довжину тунелю!")
                     break
                 except ValueError as e:
                     print(f"Невірне введення: {str(e)}. Введіть додатне число!")
