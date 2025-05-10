@@ -1,0 +1,19 @@
+# Ігноруємо компільовані Python-файли
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VS Code налаштування
+.vscode/
+
+# Системні файли
+.DS_Store
+Thumbs.db
+
+# Логи
+*.log
+
+# Картинки 
+ *.png
+ *.jpg
