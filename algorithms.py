@@ -1,5 +1,6 @@
 import math
 import random
+import time
 import numpy as np
 
 def floyd_warshall_modified(P, n):
@@ -56,8 +57,10 @@ def create_adjacency_matrix(a, b, c, d, n):
 def greedy_algorithm(n, a, b, c, d):
     lengths = compute_distances(a, b, c, d, n)
     P = create_adjacency_matrix(a, b, c, d, n)
+    start_time = time.perf_counter()
     R = floyd_warshall_modified(P, n)
-    
+    end_time = time.perf_counter()
+    warshall_time = end_time - start_time
     max_reachable = -1
     best_tunnel = 0
     best_length = -1
@@ -88,7 +91,10 @@ def greedy_algorithm(n, a, b, c, d):
 def probabilistic_algorithm(n, a, b, c, d, m):
     lengths = compute_distances(a, b, c, d, n)
     P = create_adjacency_matrix(a, b, c, d, n)
+    start_time = time.perf_counter()
     R = floyd_warshall_modified(P, n)
+    end_time = time.perf_counter()
+    warshall_time = end_time - start_time
     
     total_length_sum = sum(lengths)
     probabilities = [l / total_length_sum for l in lengths]
