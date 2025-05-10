@@ -1,4 +1,5 @@
 import time
+import matplotlib.pyplot as plt
 import math
 from generator import generate_tunnels
 from algorithms import greedy_algorithm, probabilistic_algorithm
@@ -99,6 +100,17 @@ def run_experiment_iterations():
         line = f"{m}\t{avg_L:.2f}\n"
         print(line, end="")
         result_lines.append(line)
+    
+        avg_results = [sum(results[m]) / K for m in m_values]
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(m_values, avg_results, marker='o', linestyle='-', color='blue')
+    plt.title("Залежність значення цільової функції від m")
+    plt.xlabel("Кількість ітерацій (m)")
+    plt.ylabel("Середнє значення цільової функції (L̅)")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
     
     results = "".join(experiment_lines) + "".join(result_lines)
     save_results_to_file(results)
@@ -296,16 +308,16 @@ def run_experiment_n():
         for i in range(1, K + 1):
             a, b, c, d = generate_tunnels(n, l_avg, delta_l, W, H)
             
-            start_time = time.time()
+            start_time = time.perf_counter()
             _, L_greedy = greedy_algorithm(n, a, b, c, d)
-            end_time = time.time()
+            end_time = time.perf_counter()
             greedy_time = end_time - start_time
             results_greedy_cf[n].append(L_greedy)
             results_greedy_time[n].append(greedy_time)
             
-            start_time = time.time()
+            start_time = time.perf_counter()
             _, L_prob = probabilistic_algorithm(n, a, b, c, d, m)
-            end_time = time.time()
+            end_time = time.perf_counter()
             prob_time = end_time - start_time
             results_prob_cf[n].append(L_prob)
             results_prob_time[n].append(prob_time)
