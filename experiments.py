@@ -66,14 +66,14 @@ def run_experiment_iterations():
         try:
             m_values_input = input("Введіть список значень m (через пробіл, наприклад, 0.5 1 2 5): ").split()
             m_valuescef = [float(m) for m in m_values_input]
-            m_values = [int(math.ceil(mcef*n)) for mcef in m_valuescef]
+            m_values = [int(math.ceil(round(mcef*n,5))) for mcef in m_valuescef]
             if not m_values:
                 raise ValueError("Ви маєте вказати хоча б одне значення m!")
             if any(m <= 0 for m in m_values):
                 raise ValueError("Усі значення m мають бути додатними!")
             break
         except ValueError as e:
-            print(f"Невірне введення: {str(e)}. Введіть додатні цілі числа через пробіл!")
+            print(f"Невірне введення: {str(e)}. Введіть додатні числа через пробіл!")
 
     results = {m: [] for m in m_values}
 
@@ -95,13 +95,13 @@ def run_experiment_iterations():
     print("\nРезультати експерименту (вплив m):")
     print("m\tСереднє ЦФ")
     print("-" * 20)
+    avg_results = []
     for m in m_values:
         avg_L = sum(results[m]) / K
+        avg_results.append(avg_L)
         line = f"{m}\t{avg_L:.2f}\n"
         print(line, end="")
         result_lines.append(line)
-    
-        avg_results = [sum(results[m]) / K for m in m_values]
 
     plt.figure(figsize=(8, 5))
     plt.plot(m_values, avg_results, marker='o', linestyle='-', color='blue')
@@ -111,7 +111,7 @@ def run_experiment_iterations():
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-    
+
     results = "".join(experiment_lines) + "".join(result_lines)
     save_results_to_file(results)
 
@@ -172,18 +172,18 @@ def run_experiment_delta_l():
     
     while True:
         try:
-            delta_l_values_input = input("Введіть список значень Δl від 0 до 1(через пробіл, наприклад, 0.1 0.2 0.3 1.0): ").split()
+            delta_l_values_input = input("Введіть список значень Δl від 0 до 1 (через пробіл, наприклад, 0.1 0.2 0.3 1.0): ").split()
             delta_l_valuescef = [float(dl) for dl in delta_l_values_input]
-            delta_l_values = [(round(dlcef*l_avg,1)) for dlcef in delta_l_valuescef]
+            delta_l_values = [(round(dlcef*l_avg, 5)) for dlcef in delta_l_valuescef]
             if not delta_l_values:
                 raise ValueError("Ви маєте вказати хоча б одне значення Δl!")
             if any(dl < 0 for dl in delta_l_values):
-                raise ValueError("Усі значення коефіцієнтів Δl мають бути невід'ємними!")
+                raise ValueError("Усі значення Δl мають бути невід'ємними!")
             if any(dl > l_avg for dl in delta_l_values):
-                raise ValueError("Усі значення коефіцієнтів Δl мають бути не більшими за 1!")
+                raise ValueError("Усі значення Δl мають бути не більшими за l̅!")
             break
         except ValueError as e:
-            print(f"Невірне введення: {str(e)}. Введіть невід'ємні числа, від 0 до 1")
+            print(f"Невірне введення: {str(e)}. Введіть невід'ємні числа від 0 до 1 через пробіл!")
 
     results_greedy = {dl: [] for dl in delta_l_values}
     results_prob = {dl: [] for dl in delta_l_values}
@@ -210,9 +210,13 @@ def run_experiment_delta_l():
     print("\nРезультати експерименту (вплив Δl):")
     print("Δl\tСереднє ЦФ (Жадібний)\tСереднє ЦФ (Імовірнісний)\tВідносне відхилення (%)")
     print("-" * 80)
+    avg_L_greedy_list = []
+    avg_L_prob_list = []
     for dl in delta_l_values:
         avg_L_greedy = sum(results_greedy[dl]) / K
         avg_L_prob = sum(results_prob[dl]) / K
+        avg_L_greedy_list.append(avg_L_greedy)
+        avg_L_prob_list.append(avg_L_prob)
         if avg_L_greedy == 0:
             rel_dev = "Н/Д"
         else:
@@ -221,7 +225,18 @@ def run_experiment_delta_l():
         line = f"{dl}\t{avg_L_greedy:.2f}\t\t\t{avg_L_prob:.2f}\t\t\t{rel_dev}\n"
         print(line, end="")
         result_lines.append(line)
-    
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(delta_l_values, avg_L_greedy_list, marker='o', linestyle='-', color='blue', label='Жадібний алгоритм')
+    plt.plot(delta_l_values, avg_L_prob_list, marker='s', linestyle='--', color='red', label='Імовірнісний алгоритм')
+    plt.title("Залежність значення цільової функції від Δl")
+    plt.xlabel("Відхилення довжини (Δl)")
+    plt.ylabel("Середнє значення цільової функції (L̅)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
     results = "".join(experiment_lines) + "".join(result_lines)
     save_results_to_file(results)
 
@@ -332,15 +347,47 @@ def run_experiment_n():
     print("\nРезультати експерименту (вплив n):")
     print("n\tСр. ЦФ (Жадібний)\tСр. Час (Жадібний, с)\tСр. ЦФ (Імовірнісний)\tСр. Час (Імовірнісний, с)")
     print("-" * 90)
+    avg_L_greedy_list = []
+    avg_L_prob_list = []
+    avg_time_greedy_list = []
+    avg_time_prob_list = []
     for n in n_values:
         avg_L_greedy = sum(results_greedy_cf[n]) / K
         avg_time_greedy = sum(results_greedy_time[n]) / K
         avg_L_prob = sum(results_prob_cf[n]) / K
         avg_time_prob = sum(results_prob_time[n]) / K
+        avg_L_greedy_list.append(avg_L_greedy)
+        avg_L_prob_list.append(avg_L_prob)
+        avg_time_greedy_list.append(avg_time_greedy)
+        avg_time_prob_list.append(avg_time_prob)
         line = f"{n}\t{avg_L_greedy:.2f}\t\t{avg_time_greedy:.4f}\t\t\t{avg_L_prob:.2f}\t\t\t{avg_time_prob:.4f}\n"
         print(line, end="")
         result_lines.append(line)
-    
+
+    # Графік для цільової функції
+    plt.figure(figsize=(8, 5))
+    plt.plot(n_values, avg_L_greedy_list, marker='o', linestyle='-', color='blue', label='Жадібний алгоритм')
+    plt.plot(n_values, avg_L_prob_list, marker='s', linestyle='--', color='red', label='Імовірнісний алгоритм')
+    plt.title("Залежність значення цільової функції від n")
+    plt.xlabel("Кількість тунелів (n)")
+    plt.ylabel("Середнє значення цільової функції (L̅)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+    # Графік для часу виконання
+    plt.figure(figsize=(8, 5))
+    plt.plot(n_values, avg_time_greedy_list, marker='o', linestyle='-', color='blue', label='Жадібний алгоритм')
+    plt.plot(n_values, avg_time_prob_list, marker='s', linestyle='--', color='red', label='Імовірнісний алгоритм')
+    plt.title("Залежність часу виконання від n")
+    plt.xlabel("Кількість тунелів (n)")
+    plt.ylabel("Середній час виконання (с)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
     results = "".join(experiment_lines) + "".join(result_lines)
     save_results_to_file(results)
 
